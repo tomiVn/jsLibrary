@@ -1,5 +1,4 @@
 window.addEventListener("load", solve);
-
 function solve() {
 
   let btns = {
@@ -12,22 +11,19 @@ function solve() {
   }
 
   btns.publish.addEventListener('click', onSubmit);
-
-  let data = [];
   let form = document.querySelector('form fieldset');
-  let input = Array.from(form.elements);
-  input.pop();
+  let data = [];
 
   function onSubmit(event) {
 
+    let input = Array.from(form.elements);
+    input.pop();
     event.preventDefault();
-
-
     data = input.map(e => e.value);
 
     for (let index = 0; index < data.length; index++) {
       if (data[index] == '') {
-        return
+        return;
       }
     }
 
@@ -58,7 +54,6 @@ function solve() {
     for (const i of input) {
       i.value = '';
     }
-
   }
 
   function onEdit(event) {
@@ -69,7 +64,6 @@ function solve() {
 
     for (let index = 0; index < data.length; index++) {
       input[index].value = data[index];
-
     }
     getdata.remove();
   }
