@@ -1,0 +1,106 @@
+window.addEventListener("load", solve);
+
+function solve() {
+
+  let btns = {
+    publish: document.getElementById('publish')
+  }
+
+  let areas = {
+    showCar: document.getElementById('table-body'),
+    carsList: document.getElementById('cars-list')
+  }
+
+  btns.publish.addEventListener('click', onSubmit);
+
+  let data = [];
+  let form = document.querySelector('form fieldset');
+  let input = Array.from(form.elements);
+  input.pop();
+
+  function onSubmit(event) {
+
+    event.preventDefault();
+
+
+    data = input.map(e => e.value);
+
+    for (let index = 0; index < data.length; index++) {
+      if (data[index] == '') {
+        return
+      }
+    }
+
+    let originalPrice = Number(data[4]);
+    let sellPrice = Number(data[5]);
+    if (originalPrice > sellPrice) {
+      return;
+    }
+
+    let tr = createElem('tr');
+    tr.classList.add('row');
+    for (const e of data) {
+      createElem('td', e, tr);
+    }
+    let td = createElem('td');
+    let editBtn = createElem('button', 'Edit');
+    editBtn.classList.add('action-btn');
+    editBtn.addEventListener('click', onEdit);
+    td.appendChild(editBtn);
+
+    let sellBtn = createElem('button', 'Sell');
+    sellBtn.classList.add('action-btn');
+    sellBtn.addEventListener('click', onSell);
+    td.appendChild(sellBtn);
+    tr.appendChild(td);
+    areas.showCar.appendChild(tr);
+
+    for (const i of input) {
+      i.value = '';
+    }
+
+  }
+
+  function onEdit(event) {
+    let getdata = event.currentTarget.parentNode.parentNode;
+    let tdArray = Array.from(getdata.querySelectorAll('td'));
+    tdArray.pop();
+    let data = tdArray.map(t => t.textContent);
+
+    for (let index = 0; index < data.length; index++) {
+      input[index].value = data[index];
+
+    }
+    getdata.remove();
+  }
+
+  function onSell(event) {
+    let getdata = event.currentTarget.parentNode.parentNode;
+    let tdArray = Array.from(getdata.querySelectorAll('td'));
+    tdArray.pop();
+    let data = tdArray.map(t => t.textContent);
+    let li = createElem('li');
+    li.classList.add('each-list');
+    createElem('span', `${data[0]} ${data[1]}`, li);
+    createElem('span', `${data[2]}`, li);
+    let profit = Number(data[5]) - Number(data[4]);
+    createElem('span', `${profit}`, li);
+    areas.carsList.appendChild(li);
+    getdata.remove();
+    let getTotal = document.getElementById('profit');
+    let getTotalValue = Number(getTotal.textContent);
+    getTotal.textContent = (getTotalValue + profit).toFixed(2);
+
+  }
+  //create elements
+  function createElem(type, txt, appaned) {
+    let element = document.createElement(type);
+    if (txt != undefined) {
+      element.textContent = txt;
+    }
+    if (appaned != undefined) {
+      appaned.appendChild(element);
+    }
+    return element;
+  }
+}
