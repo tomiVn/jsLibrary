@@ -1,35 +1,25 @@
 window.addEventListener("load", solve);
 function solve() {
 
-  let btns = {
-    publish: document.getElementById('publish')
-  }
-
+  let input = ['make', 'model', 'year', 'fuel', 'original-cost', 'selling-price'];
   let areas = {
-    showCar: document.getElementById('table-body'),
+    publish: document.getElementById('table-body'),
     carsList: document.getElementById('cars-list')
   }
-
-  btns.publish.addEventListener('click', onSubmit);
-  let form = document.querySelector('form fieldset');
-  let data = [];
+  let publishBtn = document.getElementById('publish');
+  publishBtn.addEventListener('click', onSubmit);
 
   function onSubmit(event) {
 
-    let input = Array.from(form.elements);
-    input.pop();
     event.preventDefault();
-    data = input.map(e => e.value);
 
+    let data = input.map(e => document.getElementById(e).value);
     for (let index = 0; index < data.length; index++) {
       if (data[index] == '') {
         return;
       }
     }
-
-    let originalPrice = Number(data[4]);
-    let sellPrice = Number(data[5]);
-    if (originalPrice > sellPrice) {
+    if (Number(data[4]) > Number(data[5])) {
       return;
     }
 
@@ -38,6 +28,7 @@ function solve() {
     for (const e of data) {
       createElem('td', e, tr);
     }
+
     let td = createElem('td');
     let editBtn = createElem('button', 'Edit');
     editBtn.classList.add('action-btn');
@@ -49,30 +40,26 @@ function solve() {
     sellBtn.addEventListener('click', onSell);
     td.appendChild(sellBtn);
     tr.appendChild(td);
-    areas.showCar.appendChild(tr);
-
-    for (const i of input) {
-      i.value = '';
+    areas.publish.appendChild(tr);
+    for (const e in input) {
+      document.getElementById(input[e]).value = '';
     }
   }
 
   function onEdit(event) {
-    let getdata = event.currentTarget.parentNode.parentNode;
-    let tdArray = Array.from(getdata.querySelectorAll('td'));
-    tdArray.pop();
-    let data = tdArray.map(t => t.textContent);
-
-    for (let index = 0; index < data.length; index++) {
-      input[index].value = data[index];
+    let currentElement = event.currentTarget.parentElement.parentElement;
+    let arrayElements = Array.from(currentElement.querySelectorAll('td'));
+    let data = arrayElements.map(e => e.textContent);
+    for (const e in input) {
+      document.getElementById(input[e]).value = data[e];
     }
-    getdata.remove();
+    currentElement.remove();
   }
 
   function onSell(event) {
-    let getdata = event.currentTarget.parentNode.parentNode;
-    let tdArray = Array.from(getdata.querySelectorAll('td'));
-    tdArray.pop();
-    let data = tdArray.map(t => t.textContent);
+    let currentElement = event.currentTarget.parentElement.parentElement;
+    let arrayElements = Array.from(currentElement.querySelectorAll('td'));
+    let data = arrayElements.map(e => e.textContent);
     let li = createElem('li');
     li.classList.add('each-list');
     createElem('span', `${data[0]} ${data[1]}`, li);
@@ -80,13 +67,12 @@ function solve() {
     let profit = Number(data[5]) - Number(data[4]);
     createElem('span', `${profit}`, li);
     areas.carsList.appendChild(li);
-    getdata.remove();
+    currentElement.remove();
     let getTotal = document.getElementById('profit');
     let getTotalValue = Number(getTotal.textContent);
     getTotal.textContent = (getTotalValue + profit).toFixed(2);
-
   }
-  //create elements
+
   function createElem(type, txt, appaned) {
     let element = document.createElement(type);
     if (txt != undefined) {
